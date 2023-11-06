@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+    
+    <title>Expense Tracker <Applet></Applet></title>
+    <style>
+        
+        body{
+           
+            background-color:#b0b0b0;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        
+    </style>
+
+</head>
+<body > <form onsubmit="">   </form>
+   
+    
+    <div class="text-lg-center">
+
+    <form  class="form-check-inline" >
+    
+    <br> 
+    <h1 id="h1id" class="popover-header">TO DO TASK </h1><br>
+
+    <label for="todoname" class="form-label">TODO NAME : </label>                                                                                                    
+    <input type="text"  name="todoname" id="todoid">
+
+    <label for="description" class="form-label"> Description : </label>
+    <input type="text"   name="descriptionname" id="descriptionid">
+
+    <button type="submit" value="submit" class="btn-dark" id="submitid" >ADD ITEM</button>
+    
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <h2 class="popover-header"> TO DO LIST : </h2>
+    <ul  id="ulid1"> </ul>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    <h2 class="popover-header"> TO DO COMPLETED LIST :  </h2>
+    <ul id="ulid2"> </ul>
+
+    </form>
+</div>
+
+
+     
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+<script >
+        
+        
+        
+        document.getElementById('submitid').addEventListener('click', funsave)
+        async function funsave(event)
+        {
+          event.preventDefault();
+            
+          const todoname=document.getElementById('todoid').value;
+          const description=document.getElementById('descriptionid').value;
+          const fulldetails={todoname,description}
+        
+
+        //uploading to cloudserver ( crud crud )
+        axios.post(' https://crudcrud.com/api/181378758f5044cd93f2e2431e429f63/data',fulldetails)
+        .then(response=> showdetailsonscreen(response.data))
+        .catch(err=> console.log(err))
+
+        
+
+        }
+
+         //GETTING DATA FROM SEVER :
+
+         window.addEventListener("DOMContentLoaded" , getdata)
+        function getdata(event){
+           
+            axios.get('https://crudcrud.com/api/181378758f5044cd93f2e2431e429f63/data')
+            .then((response)=> {
+
+                console.log(response)
+                for (var i=0; i<response.data.length; i++){
+                   showdetailsonscreen(response.data[i])
+                }
+
+           })
+
+            .catch(err=> console.log(err))
+
+
+
+
+
+
+           
+        }
+        
+    
+
+
+          
+         function  showdetailsonscreen(uploaddata)
+        {    
+            
+
+
+            
+            var ulidaccess=document.getElementById('ulid1')
+            var newli=document.createElement('li');
+            newli.id="liid";
+            newli.textContent=uploaddata.todoname + "   " + uploaddata.description;
+            ulidaccess.appendChild(newli);
+
+
+
+            //right button 
+            var rightbtn = document.createElement('input')
+            rightbtn.type="button"
+            rightbtn.value="✓"
+            newli.appendChild(rightbtn)
+            rightbtn.onclick=()=>{
+
+                
+                  axios.get(`https://crudcrud.com/api/181378758f5044cd93f2e2431e429f63/data/${uploaddata._id}`)
+                  .then((res)=> {
+                    document.getElementById('ulid2').appendChild(newli)
+
+                  })
+                  
+
+            
+
+            }
+            
+
+            
+           // create cross del button element : 
+           var deletebtn=document.createElement('input');
+           deletebtn.type="button";
+           deletebtn.value='X';
+           newli.appendChild(deletebtn);
+           deletebtn.onclick=()=>{
+       
+           axios.delete(`https://crudcrud.com/api/181378758f5044cd93f2e2431e429f63/data/${uploaddata._id}`)
+           .then(res=> console.log(res))
+           .catch(err=> console.log(err))
+
+           ulidaccess.removeChild(newli)
+
+           }
+           
+
+        }
+
+
+
+</script>
+    
+</body>
+</html>
